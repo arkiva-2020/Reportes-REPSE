@@ -361,21 +361,7 @@
 
             $("#botonBack").css("display", "none");    
         });
-
-        // $("#div-atras6").click(function() {
-        //     $("#ProveedorPage").css('display', 'none');
-        //     $("#ProveedorPrincipal").css('display', 'block');
-        // });
-
-        // $("#div-atras4").click(function() {
-        //     $("#Cargar").css('display', 'none');
-        //     $("#ProveedorPrincipal").css('display', 'block');
-        // });
-        // $("#div-atras5").click(function() {
-        //     $("#CargarProveedores").css('display', 'none');
-        //     $("#DivTbDtailP").css('display', 'block');
-        //     $("#ProveedorPrincipal").css('display', 'block');
-        // });
+       
 
         function openProveedores2(){
 
@@ -395,14 +381,38 @@
 
         function DatosFaltantesProvedor() {                         
           var data = JSON.parse(localStorage.getItem("Id"));          
-          var id = "";
-          if (localStorage.getItem("Id") === null) {
+          var idEmp = "";
+          if (JSON.parse(localStorage.getItem("Id") === null)) {
+
+            // <?php
+            //     $listadoID = array();
+            //     $idEmpresa = '';
+            //     $sql2="SELECT * FROM MFEmpresaInterna WHERE Proveedor!=''";
+            //     $ejecutar2=sqlsrv_query($con, $sql2);
+            //     while ($row = sqlsrv_fetch_array($ejecutar2, SQLSRV_FETCH_ASSOC)){	
+            //         $idEmpresa = $row['ObjID'];                    
+            //         array_push($listadoID, $idEmpresa);	                                 
+            //     }
+
+            //     $idC = json_encode($listadoID);
+                
+            // ?>
+            //     var listadoEmpresaJS = <?php #echo $idC; ?>;
+            //     // console.log(listadoEmpresaJS);
+            //     var arr = [];
+            //     for (var i = 0; i < listadoEmpresaJS.length; i++){
+            //         arr.push(listadoEmpresaJS[i].toString());                                        
+            //     }
+            //     console.log("Definitiva: ", arr);                
+
+            // idEmp = arr;
             id = "";
           } else {
-            id = JSON.parse(localStorage.getItem("Id"));
+            idEmp = JSON.parse(localStorage.getItem("Id"));
+            // console.log("Definitiva 2: ", idEmp);                
           }
 
-          console.log("Storage", id);
+        //   console.log("Storage", id);
 
           $(document).ready(function () {
             var table = $("#tablaDocumentosFaltantesProveedor").DataTable({
@@ -412,7 +422,7 @@
               order: [[0, "desc"]],
               dom: '<"html5buttons"B>lTfgitp',
               ajax: {
-                url: "./apirest/DatosFaltantesProvedor.php?id=" + id,
+                url: "./apirest/DatosFaltantesProvedor.php?id=" + idEmp,
                 type: "GET",
                 // 'dataSrc':''
               },

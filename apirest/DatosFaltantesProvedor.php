@@ -18,7 +18,9 @@
         $ejecutar=sqlsrv_query($con, $sql);
             
         while ($filaProveedor = sqlsrv_fetch_array($ejecutar, SQLSRV_FETCH_NUMERIC)){	
-                
+            
+                $null = 1;
+
                 $cantidadPro=$filaProveedor[9];
 
 
