@@ -149,7 +149,7 @@
             @IDEmpresInterna = N'''1''',
             @p = N''',''',
             @DocumentoProveedor = N'''Documento Proveedor''',
-            @Vacio = N''''''            
+            @Vacio = N''''''                    
 
     SELECT	'Return Value' = @return_value
     ";

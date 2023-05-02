@@ -290,16 +290,18 @@ function obtenerDatosFaltantesProvedor(tbody, table) {
   ////////////// EMPLEADOS ///////////////////////
   ////////////// START TABLA PIVOTE //////////////
   $(tbody).on("click", "button.docProveedorPivote", function () {
-    $("#ProveedorPrincipal").css("display", "none");
-    // $("#tablaMono").css("display", "block");
+    $("#ProveedorPrincipal").css("display", "none");    
     $("#ProveedorPage").css("display", "block");
     $("#botonBack").css("display", "block");    
-
+        
+    
+    var rfc = "";
     var data = table.row($(this).parents("tr")).data();
     var idEmpresa = data.IdEmpresa;
-    var idProveedor = data.ID;
-    ConsultaTablaMono(idEmpresa, idProveedor);    
-    // console.log(idEmpresa, idProveedor);
+    var idProveedor = data.ID;    
+    ConsultaTablaMono(idEmpresa, idProveedor);            
+
+    rfc=data.Rfc_Empresa;         
 
     //data.detallesEmpleados.length;
     var cadena = "";
@@ -312,16 +314,17 @@ function obtenerDatosFaltantesProvedor(tbody, table) {
 
     cadena2 = "";
     var arrayData = data.detallesEmpleados;
+    // var arrayData = [];
 
     // console.log("Empleados yan", arrayData);
     /////////////////////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////Carga de periodos////////////////////////////////////////
+    ////////////////////////////////Carga de periodos Empleadoss////////////////////////////////////////
     for (var jPer = 0; jPer < arrayData.length; jPer++) {
       var documentosArrayPer = arrayData[jPer].DocumentosEmpleados;
       for (var kPer = 0; kPer < documentosArrayPer.length; kPer++) {
         
         if (documentosArrayPer[kPer].PeriodoFecha == null) {          
-          documentosArrayPer[kPer].PeriodoFecha = "2022-05-01";              
+          documentosArrayPer[kPer].PeriodoFecha = "2022-01-01";              
         }                        
 
         var f = documentosArrayPer[kPer].PeriodoFecha;        
@@ -371,7 +374,7 @@ function obtenerDatosFaltantesProvedor(tbody, table) {
         anio: yearEmpresaPer,
       };
       mesesInvolucrados.push(arrayMes);
-      mesesInvolucrados.sort((a, b) => a.mes - b.mes);
+      // mesesInvolucrados.sort((a, b) => a.mes - b.mes);
     }
     ////////////////////////////////////////////////////////////////////
     const result = aniosInvolucrados.reduce((acc, item) => {
@@ -385,14 +388,11 @@ function obtenerDatosFaltantesProvedor(tbody, table) {
     let resultMeses = mesesInvolucrados.map((meses) => {
       return [JSON.stringify(meses), meses];
     });    
-    let mesesMapArr = new Map(resultMeses); // Pares de clave y valor
-    // console.log(resultMeses);
+    let mesesMapArr = new Map(resultMeses); // Pares de clave y valor    
 
     let unicos = [...mesesMapArr.values()]; // Conversión a un array
 
-    mesesInvolucrados = unicos;
-    // console.log("Fechas involucradas", aniosInvolucrados);
-    // console.log("Meses involucradas", mesesInvolucrados);
+    mesesInvolucrados = unicos;    
     var cabecera = "";
     var cabecera2 = "<tr>";
 
@@ -415,7 +415,7 @@ function obtenerDatosFaltantesProvedor(tbody, table) {
         ', 0)" style="font-size: 16px;"><i class="fa fa-minus-square-o"></i></button>';
 
       for (var cab2 = 0; cab2 < mesesInvolucrados.length; cab2++) {
-        if (mesesInvolucrados[cab2].anio == aniosInvolucrados[cab]) {
+        if (mesesInvolucrados[cab2].anio == aniosInvolucrados[cab]) {          
           colspanHeader++;
           cabecera2 =
             cabecera2 +
@@ -479,9 +479,9 @@ function obtenerDatosFaltantesProvedor(tbody, table) {
       var documentosArray = arrayData[j].DocumentosEmpleados;
       rowspan = rowspan + documentosArray.length;
       for (var k = 0; k < documentosArray.length; k++) {
-        var f = new Date(documentosArray[k].Fecha);
-        var yearEmpleado = f.getFullYear();
-        var monthEmpleados = f.getMonth() + 1;
+        // var f = new Date(documentosArray[k].Fecha);
+        // var yearEmpleado = f.getFullYear();
+        // var monthEmpleados = f.getMonth() + 1;
 
         var cadenaIntegrada = "";
         for (var cab = 0; cab < mesesInvolucrados.length; cab++) {
@@ -497,16 +497,16 @@ function obtenerDatosFaltantesProvedor(tbody, table) {
               '<div id="MiDivE' +
               retorno +
               '" style="display: inline-flex; margin-left: 7px;">' +
-              '<form style="margin-top: 5px; margin-right: 3px;" id="SubirArchivoE' +
+              '<form style="margin-top: 5px; margin-right: 3px;" id="SubirArchivoEmpleado' +
               retorno +
               '">' +
               '<label for="File' +
               retorno +
               '">' +
               '<span class="btn btn-danger editar btn-circle btn-outline tooltip_detalles" data-info="Subir Documento" style="padding: 3.5px 6px;"><i class="fa fa-cloud-upload"></i>' +
-              '<input type="file" multiple id="File' +
+              '<input class="subir-pdf-1-employe" data-rfc="'+rfc+'" data-clase="'+arrayData[j].Documentos+'" data-fecha="'+ mesesInvolucrados[cab].anio + mesesInvolucrados[cab].mes +'" type="file" multiple id="File' +
               retorno +
-              '" style="display:none" onChange="CargarEmpleadoEmpresa(' +
+              '" style="display:none" onChange="CargarDocumentoEmpleado(' +
               retorno +
               ')">' +
               "</span>" +
@@ -534,19 +534,19 @@ function obtenerDatosFaltantesProvedor(tbody, table) {
             if (retornop1 != 0) {
               ////////////////AQUI VA EL BOTON PARA SUBIR COMPROBANTE EN DOC. EMPRESA
               var botonWarning =
-                '<div id="MiDiv' +
+                '<div id="MiDivE' +
                 retornop1 +
                 '" style="display: inline-flex; margin-left: 5px;">' +
-                '<form style="margin-top: 5px; margin-right: 3px;" id="SubirArchivo' +
+                '<form style="margin-top: 5px; margin-right: 3px;" id="SubirArchivoEmpleado' +
                 retornop1 +
                 '">' +
                 '<label for="File' +
                 retornop1 +
                 '">' +
                 '<span class="btn btn-warning editar btn-circle btn-outline tooltip_detalles" data-info="Subir Comprobante de Pago" style="padding: 3px 6px"><i class="fa fa-warning"></i>' +
-                '<input type="file" multiple id="File' +
+                '<input class="subir-pdf-2-employe" data-rfc="'+rfc+'" data-clase="'+arrayData[j].Documentos+'" data-fecha="'+ mesesInvolucrados[cab].anio + mesesInvolucrados[cab].mes +'" type="file" multiple id="File' +
                 retornop1 +
-                '" style="display:none" onChange="CargarComprobanteProveedor(' +
+                '" style="display:none" onChange="CargarComprobanteEmpleado(' +
                 retornop1 +
                 ')">' +
                 "</span>" +
@@ -574,10 +574,10 @@ function obtenerDatosFaltantesProvedor(tbody, table) {
               );              
               if (retornop2 != 0) {
                 var botonInfo =
-                  '<div id="MiDiv' +
+                  '<div id="MiDivE' +
                   retornop2 +
                   '" style="display: inline-flex; margin-left: 5px;">' +
-                  '<form style="margin-top: 5px; margin-right: 3px;" id="SubirArchivo' +
+                  '<form style="margin-top: 5px; margin-right: 3px;" id="SubirArchivoEmpleado' +
                   retornop2 +
                   '">' +
                   '<label for="File' +
@@ -586,7 +586,7 @@ function obtenerDatosFaltantesProvedor(tbody, table) {
                   '<span class="btn btn-info editar btn-circle btn-outline tooltip_detalles" data-info="Pendiente" style="padding: 3px 9.7px"><i class="fa fa-info"></i>' +
                   '<input type="file" multiple id="File' +
                   retornop2 +
-                  '" style="display:none" onChange="CheckProveedores(' +
+                  '" style="display:none" onChange="CheckEmpleado(' +
                   retornop2 +
                   ')">' +
                   "</span>" +
@@ -677,6 +677,8 @@ function obtenerDatosFaltantesProvedor(tbody, table) {
         "</td>" +
         cadena3;
     }
+
+
     var botonE1 =
       '<button style="font-size: 16px" class="btn btn-outline btn-link" type="button" id="botonVE' +
       data.ID +
@@ -702,6 +704,10 @@ function obtenerDatosFaltantesProvedor(tbody, table) {
     var cadena4 = "";
     var cadena5 = "";
 
+
+
+
+
     var arrayData2 = data.detallesProveedores;
     // console.log("hola yan: ", arrayData2);
 
@@ -715,20 +721,17 @@ function obtenerDatosFaltantesProvedor(tbody, table) {
       const registro = arrayData2[indice];
       let esDuplicado = false;
       for (var i = 0; i < unicosP.length; i++) {
-        if (
-          unicosP[i].NombreDocumento === registro.NombreDocumento &&
-          unicosP[i].ProveedorID === registro.ProveedorID
-        ) {
-          esDuplicado = true;
-          break;
+        if (unicosP[i].NombreDocumento === registro.NombreDocumento && unicosP[i].ProveedorID === registro.ProveedorID) {
+            esDuplicado = true;
+            break;
         }
       }
       if (!esDuplicado) {
         unicosP.push(registro);
-        //console.log("Mis unicos", unicosP);
+        // console.log("Mis unicos", unicosP);
       }
     }
-    arrayData2 = unicosP;
+    arrayData2 = unicosP;    
     rowspan2 = arrayData2.length;
     ////////////////////////////////////////////Limpiar array////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -749,30 +752,32 @@ function obtenerDatosFaltantesProvedor(tbody, table) {
       ', 0)" style="display:none; font-size: 16px;"><i class="fa fa-minus-square-o"></i></button>';
 
     for (var a = 0; a < arrayData2.length; a++) {
-      var f = new Date(arrayData2[a].PeriodoFecha);
-      var yearEmpresa = f.getFullYear();
-      var monthEmpresa = f.getMonth() + 1;
+      // var f = new Date(arrayData2[a].PeriodoFecha);
+      // var yearEmpresa = f.getFullYear();
+      // var monthEmpresa = f.getMonth() + 1;
+      
 
       var cadenaIntegrada = "";
       for (var cab = 0; cab < mesesInvolucrados.length; cab++) {
+        // console.log(arrayData2[a]);
         var retorno = busquedaArrayRetorno(
           arrayData2[a].NombreDocumento,
           mesesInvolucrados[cab].anio,
-          mesesInvolucrados[cab].mes
-        );
+          mesesInvolucrados[cab].mes          
+        );           
         if (retorno != 0) {
           var botonInput =
             '<div id="MiDiv' +
             retorno +
             '" style="display: inline-flex; margin-left: 7px;">' +
-            '<form style="margin-top: 5px; margin-right: 3px;" id="SubirArchivo' +
+            '<form enctype="multipart/form-data" style="margin-top: 5px; margin-right: 3px;" id="SubirArchivo' +
             retorno +
             '">' +
             '<label for="File' +
             retorno +
             '">' +
-            '<span class="btn btn-danger editar btn-circle btn-outline tooltip_detalles" data-info="Subir Documento" style="padding: 3.5px 6px;"><i class="fa fa-cloud-upload"></i>' +
-            '<input type="file" multiple id="File' +
+            '<span class="btn btn-danger editar btn-circle btn-outline tooltip_detalles rfcArchivo" data-info="Subir Documento" style="padding: 3.5px 6px;"><i class="fa fa-cloud-upload"></i>' +
+            '<input class="subir-pdf-1" data-rfc="'+rfc+'" data-clase="'+arrayData2[a].NombreDocumento+'" data-fecha="'+ mesesInvolucrados[cab].anio + mesesInvolucrados[cab].mes +'" type="file" multiple id="File' +
             retorno +
             '" style="display:none" onChange="CargarProveedores(' +
             retorno +
@@ -781,6 +786,10 @@ function obtenerDatosFaltantesProvedor(tbody, table) {
             "</label>" +
             "</form>" +
             "</div>";
+
+            // console.log(mesesInvolucrados[cab].anio + "-" + mesesInvolucrados[cab].mes);
+            // var botonInput = "Aqui";
+            
           cadenaIntegrada =
             cadenaIntegrada +
             '<td class="text-center celdaC' +
@@ -809,7 +818,7 @@ function obtenerDatosFaltantesProvedor(tbody, table) {
               retornop1 +
               '">' +
               '<span class="btn btn-warning editar btn-circle btn-outline tooltip_detalles" data-info="Subir Comprobante de Pago" style="padding: 3px 6px"><i class="fa fa-warning"></i>' +
-              '<input type="file" multiple id="File' +
+              '<input class="subir-pdf-2" data-rfc="'+rfc+'" data-clase="'+arrayData2[a].NombreDocumento+'" data-fecha="'+ mesesInvolucrados[cab].anio + mesesInvolucrados[cab].mes +'" type="file" multiple id="File' +
               retornop1 +
               '" style="display:none" onChange="CargarComprobanteProveedor(' +
               retornop1 +
@@ -915,6 +924,7 @@ function obtenerDatosFaltantesProvedor(tbody, table) {
       botonC2 +
       "</td>" +
       cadena4;
+      
     if (rowspan == 0) {
       rowspan = 1;
     }
@@ -972,11 +982,12 @@ function busquedaArrayRetornoProv(id, anio, mes) {
             var yearEmpresa = f.getFullYear();
             var monthEmpresa = f.getMonth() + 1;*/
     if (
-      id == arrayData2[a].NombreDocumento &&
-      anio == yearEmpresa &&
-      mes == monthEmpresa &&
-      arrayData2[a].Status == "1"
-    ) {
+        id == arrayData2[a].NombreDocumento &&
+        anio == yearEmpresa &&
+        mes == monthEmpresa &&
+        arrayData2[a].Status == "1"
+        ) 
+    {
       idRetorno = arrayData2[a].DocumentosID;
     }
   }
@@ -1156,11 +1167,26 @@ function busquedaArrayRetornoEmp3(empleado, Documento, anio, mes) {
   return idRetorno;
 }
 
-// Start Cambiar Status Proveedor
+
 function CargarProveedores(idDoc) {
-  // console.log($("#File" + idDoc).val());
+
+  $(".loading").show();
+  
+  var base = document.getElementById("File" + idDoc);
+  var fecha = base.dataset.fecha;
+  var clase = base.dataset.clase;
+  var rfc = base.dataset.rfc;
+  
   var formData = new FormData(document.getElementById("SubirArchivo" + idDoc));  
+  var pdf = base.files[0];  
+  // var pdf = $('#File')[0].files[0];
+  
+  // console.log(idDoc);
   formData.append("id", idDoc);
+  formData.append("pdf", pdf);
+  formData.append("rfc", rfc);
+  formData.append("clase", clase);
+  formData.append("fecha", fecha);
   $.ajax({
     url: "apirest/CambiarEstadoDocumento.php",
     type: "post",
@@ -1170,41 +1196,67 @@ function CargarProveedores(idDoc) {
     contentType: false,
     processData: false,
   }).done(function (res) {
-    setTimeout(function () {
-      toastr.options = {
-        closeButton: true,
-        progressBar: true,
-        showMethod: "slideDown",
-        timeOut: 8000,
-      };
-      toastr.success("Documento Subido Correctamente.", "Éxito!");
-    }, 1300);
 
-    var botonWarning =
-      '<form style="margin-top: 5px; margin-right: 3px;" id="SubirArchivo' +
-      idDoc +
-      '">' +
-      '<label for="File' +
-      idDoc +
-      '">' +
-      '<span class="btn btn-warning editar btn-circle btn-outline tooltip_detalles" data-info="Subir Comprobante de Pago" style="padding: 3px 6px"><i class="fa fa-warning"></i>' +
-      '<input type="file" multiple id="File' +
-      idDoc +
-      '" style="display:none" onChange="CargarComprobanteProveedor(' +
-      idDoc +
-      ')">' +
-      "</span>" +
-      "</label>" +
-      "</form>";
-    $("#MiDiv" + idDoc).html(botonWarning);
-    $("#tablaDocumentosFaltantesProveedor").DataTable().ajax.reload();
+    $(".loading").hide();
+
+    if(res == 1){      
+        toastr.options = {
+          closeButton: true,
+          progressBar: true,
+          showMethod: "slideDown",
+          timeOut: 8000,
+        };
+        toastr.success("Documento Subido Correctamente.", "Éxito!");   
+        
+        var botonWarning =
+        '<form style="margin-top: 5px; margin-right: 3px;" id="SubirArchivo' +
+        idDoc +
+        '">' +
+        '<label for="File' +
+        idDoc +
+        '">' +
+        '<span class="btn btn-warning editar btn-circle btn-outline tooltip_detalles" data-info="Subir Comprobante de Pago" style="padding: 3px 6px"><i class="fa fa-warning"></i>' +
+        '<input class="subir-pdf-2" data-rfc="'+rfc+'" data-clase="'+clase+'" data-fecha="'+fecha+'" type="file" multiple id="File' +
+        idDoc +
+        '" style="display:none" onChange="CargarComprobanteProveedor(' +
+        idDoc +
+        ')">' +
+        "</span>" +
+        "</label>" +
+        "</form>";
+      $("#MiDiv" + idDoc).html(botonWarning);
+      $("#tablaDocumentosFaltantesProveedor").DataTable().ajax.reload();              
+
+    } else if(res == 2) {      
+        toastr.options = {
+          closeButton: true,
+          progressBar: true,
+          showMethod: "slideDown",
+          timeOut: 8000,
+        };
+        toastr.error("Ocurrio un error ineperado.", "Error!");              
+    }
+  
   });
 }
 
 function CargarComprobanteProveedor(idDoc) {
-  console.log($("#File" + idDoc).val());
+  $(".loading").show();
+
+  var base = document.getElementById("File" + idDoc);
+  var fecha = base.dataset.fecha;
+  var clase = base.dataset.clase;
+  var rfc = base.dataset.rfc;
+
+  // console.log($("#File" + idDoc).val());
   var formData = new FormData(document.getElementById("SubirArchivo" + idDoc));
+  // var pdf = $('.subir-pdf-2')[0].files[0];
+  var pdf = base.files[0];
   formData.append("id", idDoc);
+  formData.append("pdf", pdf);
+  formData.append("rfc", rfc);
+  formData.append("clase", clase);
+  formData.append("fecha", fecha);
   $.ajax({
     url: "apirest/CambiarEstadoDocumentoComprobante.php",
     type: "post",
@@ -1214,17 +1266,17 @@ function CargarComprobanteProveedor(idDoc) {
     contentType: false,
     processData: false,
   }).done(function (res) {
-    setTimeout(function () {
-      toastr.options = {
-        closeButton: true,
-        progressBar: true,
-        showMethod: "slideDown",
-        timeOut: 4000,
-      };
-      toastr.success("Comprobante Subido Correctamente", "Éxito!");
-    }, 1300);
+    $(".loading").hide();
+    if(res == 1){      
+        toastr.options = {
+          closeButton: true,
+          progressBar: true,
+          showMethod: "slideDown",
+          timeOut: 8000,
+        };
+        toastr.success("Comprobante Subido Correctamente.", "Éxito!");      
 
-    var botonCheck =
+      var botonCheck =
       '<form style="margin-top: 5px; margin-right: 3px;" id="SubirArchivo' +
       idDoc +
       '">' +
@@ -1234,18 +1286,32 @@ function CargarComprobanteProveedor(idDoc) {
       '<span class="btn btn-info editar btn-circle btn-outline tooltip_detalles" data-info="Pendiente Por Validación"  onClick="CheckProveedores(' +
       idDoc +
       ')" style="padding: 3px 9.9px"><i class="fa fa-info"></i>' +
-      // '<input type="button" id="File'+idDoc+'" style="display:none" onChange="CheckProveedores('+idDoc+')">'+
+      '<input type="button" id="File'+idDoc+'" style="display:none" onChange="CheckProveedores('+idDoc+')">'+
       "</span>" +
       "</label>" +
       "</form>";
-    // var cadena='<span class="btn btn-info btn-circle btn-outline tooltip_detalles mt-1 mb-1" data-info="Subir comprobante de pago" style="padding: 3px 5px; width:25px; height:25px;"><i class="fa fa-info"></i></span>'
-    $("#MiDiv" + idDoc).html(botonCheck);
-    $("#tablaDocumentosFaltantesProveedor").DataTable().ajax.reload();
+      // var cadena='<span class="btn btn-info btn-circle btn-outline tooltip_detalles mt-1 mb-1" data-info="Subir comprobante de pago" style="padding: 3px 5px; width:25px; height:25px;"><i class="fa fa-info"></i></span>'
+      $("#MiDiv" + idDoc).html(botonCheck);
+      $("#tablaDocumentosFaltantesProveedor").DataTable().ajax.reload();
+      
+
+    } else if(res == 2) {      
+        toastr.options = {
+          closeButton: true,
+          progressBar: true,
+          showMethod: "slideDown",
+          timeOut: 8000,
+        };
+        toastr.error("Ocurrio un error ineperado.", "Error!");              
+    }
+
+    
   });
 }
 
 function CheckProveedores(idDoc) {
-  console.log($("#File" + idDoc).val());
+  $(".loading").show();
+  // console.log($("#File" + idDoc).val());
   var formData = new FormData(document.getElementById("SubirArchivo" + idDoc));
   formData.append("id", idDoc);
   $.ajax({
@@ -1257,15 +1323,17 @@ function CheckProveedores(idDoc) {
     contentType: false,
     processData: false,
   }).done(function (res) {
-    setTimeout(function () {
+    $(".loading").hide();
+    if (res) {      
       toastr.options = {
         closeButton: true,
         progressBar: true,
         showMethod: "slideDown",
         timeOut: 4000,
       };
-      toastr.success("Documento Verificado Correctamente", "Éxito!");
-    }, 1300);
+      toastr.success("Documento Verificado Correctamente", "Éxito!");      
+    }
+    
 
     var botonCheck =
       '<form style="margin-top: 5px; margin-right: 3px;" id="SubirArchivo' +
@@ -1291,11 +1359,23 @@ function CheckProveedores(idDoc) {
 
 
 
-function CargarEmpleadoEmpresa(idDoc) {
+function CargarDocumentoEmpleado(idDoc) {
+  $(".loading").show();
+  var base = document.getElementById("File" + idDoc);
+  var fecha = base.dataset.fecha;
+  var clase = base.dataset.clase;
+  var rfc = base.dataset.rfc;
+
   // console.log($("#File" + idDoc).val());
-  var formData = new FormData(document.getElementById("SubirArchivoE" + idDoc));
-  console.log(idDoc);
+  var formData = new FormData(document.getElementById("SubirArchivoEmpleado" + idDoc));  
+  // var pdf = $('.subir-pdf-1-employe')[0].files[0];
+  var pdf = base.files[0];
   formData.append("id", idDoc);
+  formData.append("pdf", pdf);
+  formData.append("rfc", rfc);
+  formData.append("clase", clase);
+  formData.append("fecha", fecha);
+
   $.ajax({
     url: "apirest/CambiarEstadoDocumento.php",
     type: "post",
@@ -1304,40 +1384,162 @@ function CargarEmpleadoEmpresa(idDoc) {
     cache: false,
     contentType: false,
     processData: false,
-  }).done(function (res) {    
-    setTimeout(function () {
+  }).done(function (res) {
+    $(".loading").hide();    
+    if (res == 1) {
       toastr.options = {
         closeButton: true,
         progressBar: true,
         showMethod: "slideDown",
         timeOut: 8000,
       };
-      toastr.success("Documento Subido Correctamente.", "Éxito!");
-    }, 1300);
+      toastr.success("Documento Subido Correctamente.", "Éxito!");      
 
-    var botonWarning =
-      '<form style="margin-top: 5px; margin-right: 3px;" id="SubirArchivoE' +
+      var botonWarning =
+      '<form style="margin-top: 5px; margin-right: 3px;" id="SubirArchivoEmpleado' +
       idDoc +
       '">' +
       '<label for="File' +
       idDoc +
       '">' +
       '<span class="btn btn-warning editar btn-circle btn-outline tooltip_detalles" data-info="Subir Comprobante de Pago" style="padding: 3px 6px"><i class="fa fa-warning"></i>' +
-      '<input type="file" multiple id="File' +
+      '<input class="subir-pdf-2-employe" data-rfc="'+rfc+'" data-clase="'+clase+'" data-fecha="'+fecha+'" type="file" multiple id="File' +
       idDoc +
-      '" style="display:none" onChange="CargarEmpleadoEmpresa(' +
+      '" style="display:none" onChange="CargarComprobanteEmpleado(' +
       idDoc +
       ')">' +
       "</span>" +
       "</label>" +
       "</form>";
-    $("#MiDivE" + idDoc).html(botonWarning);
-    $("#tablaDocumentosFaltantesProveedor").DataTable().ajax.reload();
-    // var cadena =
-    //   '<span class="btn btn-success btn-circle btn-outline tooltip_detalles mt-1 mb-1" data-info="Documento Subido" style="padding: 3px 5px; width:25px; height:25px;"><i class="fa fa-check-circle"></i></span>';
-    // $("#MiDivE" + idDoc).html(cadena);
-    // $("#tablaDocumentosFaltantesProveedor").DataTable().ajax.reload();
+      $("#MiDivE" + idDoc).html(botonWarning);
+      $("#tablaDocumentosFaltantesProveedor").DataTable().ajax.reload();      
+
+    } else if(res == 2){
+      toastr.options = {
+        closeButton: true,
+        progressBar: true,
+        showMethod: "slideDown",
+        timeOut: 8000,
+      };
+      toastr.error("Ocurrio un error ineperado.", "Error!");
+      
+    }
+ 
+
   });  
+}
+
+function CargarComprobanteEmpleado(idDoc) {
+  $(".loading").show();
+  var base = document.getElementById("File" + idDoc);
+  var fecha = base.dataset.fecha;
+  var clase = base.dataset.clase;
+  var rfc = base.dataset.rfc;
+
+  // console.log($("#File" + idDoc).val());
+  var formData = new FormData(document.getElementById("SubirArchivoEmpleado" + idDoc));
+  // var pdf = $('.subir-pdf-2-employe')[0].files[0];
+  var pdf = base.files[0];
+  formData.append("id", idDoc);
+  formData.append("pdf", pdf);
+  formData.append("rfc", rfc);
+  formData.append("clase", clase);
+  formData.append("fecha", fecha);
+  $.ajax({
+    url: "apirest/CambiarEstadoDocumentoComprobante.php",
+    type: "post",
+    dataType: "json",
+    data: formData,
+    cache: false,
+    contentType: false,
+    processData: false,
+  }).done(function (res) {
+    $(".loading").hide();
+    if(res == 1){      
+        toastr.options = {
+          closeButton: true,
+          progressBar: true,
+          showMethod: "slideDown",
+          timeOut: 8000,
+        };
+        toastr.success("Comprobante Subido Correctamente.", "Éxito!");  
+        
+        var botonCheck =
+        '<form style="margin-top: 5px; margin-right: 3px;" id="SubirArchivoEmpleado' +
+        idDoc +
+        '">' +
+        '<label for="File' +
+        idDoc +
+        '">' +
+        '<span class="btn btn-info editar btn-circle btn-outline tooltip_detalles" data-info="Pendiente Por Validación"  onClick="CheckEmpleado(' +
+        idDoc +
+        ')" style="padding: 3px 9.9px"><i class="fa fa-info"></i>' +
+        '<input type="button" id="File'+idDoc+'" style="display:none" onChange="CheckEmpleado('+idDoc+')">'+
+        "</span>" +
+        "</label>" +
+        "</form>";    
+      $("#MiDivE" + idDoc).html(botonCheck);
+      $("#tablaDocumentosFaltantesProveedor").DataTable().ajax.reload();      
+
+    } else if(res == 2) {      
+        toastr.options = {
+          closeButton: true,
+          progressBar: true,
+          showMethod: "slideDown",
+          timeOut: 8000,
+        };
+        toastr.error("Ocurrio un error ineperado.", "Error!");              
+    }
+
+  });
+}
+
+function CheckEmpleado(idDoc) {
+  $(".loading").show();
+  console.log($("#File" + idDoc).val());
+  var formData = new FormData(document.getElementById("SubirArchivoEmpleado" + idDoc));
+  formData.append("id", idDoc);
+  $.ajax({
+    url: "apirest/CambiarEstadoDocumentoCheck.php",
+    type: "post",
+    dataType: "json",
+    data: formData,
+    cache: false,
+    contentType: false,
+    processData: false,
+  }).done(function (res) {
+    $(".loading").hide();
+    if (res) {      
+      toastr.options = {
+        closeButton: true,
+        progressBar: true,
+        showMethod: "slideDown",
+        timeOut: 4000,
+      };
+      toastr.success("Documento Verificado Correctamente", "Éxito!");      
+    }
+    
+
+    var botonCheck =
+      '<form style="margin-top: 5px; margin-right: 3px;" id="SubirArchivoEmpleado' +
+      idDoc +
+      '">' +
+      '<label for="File' +
+      idDoc +
+      '">' +
+      '<span class="btn btn-secondary editar btn-circle btn-outline tooltip_detalles" data-info="Válido" style="padding: 3px 6px"><i class="fa fa-check"></i>' +
+      '<input type="file" multiple id="File' +
+      idDoc +
+      '" style="display:none" onChange="CargarComprobanteProveedor(' +
+      idDoc +
+      ')">' +
+      "</span>" +
+      "</label>" +
+      "</form>";
+    // var cadena='<span class="btn btn-info btn-circle btn-outline tooltip_detalles mt-1 mb-1" data-info="Subir comprobante de pago" style="padding: 3px 5px; width:25px; height:25px;"><i class="fa fa-info"></i></span>'
+    $("#MiDivE" + idDoc).html(botonCheck);
+    $("#tablaDocumentosFaltantesProveedor").DataTable().ajax.reload();
+  });
 }
 // End Cambiar Status Proveedor
 
@@ -1827,8 +2029,7 @@ function CargarProveedoresClientes(idDoc) {
   });
   // $("#ProveedorPrincipal").css('display','none');
   // $("#Trabajador").css('display','none');
-  //    $("#DivTbDtailP").css('display','none');
-  //    $("#CargarProveedores").css('display','block');
+  //    $("#DivTbDtailP").css('display','none');  
 }
 
 function CargarEmpleadoE(idDoc) {
@@ -1851,8 +2052,7 @@ function CargarEmpleadoE(idDoc) {
   });
   // $("#ProveedorPrincipal").css('display','none');
   // $("#Trabajador").css('display','none');
-  //    $("#DivTbDtailP").css('display','none');
-  //    $("#CargarProveedores").css('display','block');
+  //    $("#DivTbDtailP").css('display','none');  
 }
 ///////////////////////////////////////////////////////////
 

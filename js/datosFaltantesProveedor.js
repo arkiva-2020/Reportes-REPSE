@@ -28,10 +28,12 @@ function ConsultaTablaMono(idEmpresa, idProveedor) {
                     } else {
                     orden =
                         "<center>"+
-                            "<input type='file' id='OrderCompra' style='display:none' onChange='subirOrderCompra("+data.ID+")'> "+
+                            "<form id='OrderDeCompraForm'>"+
+                                "<input type='file' id='OrderCompra' style='display:none' onChange='subirOrderCompra("+data.ID+")'> "+
                                 "<span class='btn btn-danger btn-circle btn-outline' onclick='fun1()'>"+
                                     "<i class='fa fa-cloud-upload'></i>"+
                                 "</span>"+                            
+                            "</form>"+
                         "</center>";
                     }
                     return orden;
@@ -46,10 +48,12 @@ function ConsultaTablaMono(idEmpresa, idProveedor) {
                     } else {
                     entregables =
                         "<center>"+
-                            "<input type='file' id='entregables' style='display:none' onChange='subirEntregables("+data.ID+")'> "+
-                                "<span class='btn btn-danger btn-circle btn-outline' onclick='fun2()'>"+
-                                    "<i class='fa fa-cloud-upload'></i>"+
-                                "</span>"+                            
+                            "<form id='EntregablesForm'>"+
+                                "<input type='file' id='entregables' style='display:none' onChange='subirEntregables("+data.ID+")'> "+
+                                    "<span class='btn btn-danger btn-circle btn-outline' onclick='fun2()'>"+
+                                        "<i class='fa fa-cloud-upload'></i>"+
+                                    "</span>"+     
+                            "</form>"+                       
                         "</center>";
                     }
                     return entregables;
@@ -86,30 +90,42 @@ function fun1(){
     $("#OrderCompra").click();
 }
 
-function subirOrderCompra(id){        
-    var formData = 'id='+id;    
+function subirOrderCompra(id){ 
+    $(".loading").show();
+    var formData = new FormData(document.getElementById("OrderDeCompraForm"));  
+    var base = document.getElementById("OrderCompra");       
+    var pdf = base.files[0];    
+
+    formData.append("id", id);
+    formData.append("pdf", pdf);        
     $.ajax({
         url: "apirest/InsertarOrdenCompra.php",
         type: "POST",  
-        dataType:"html",      
+        dataType:"json",      
         data: formData,
-        asycn: false,
-        // cache: false,
-        // contentType: false,
-        // processData: false,
+        cache: false,
+        contentType: false,
+        processData: false
     }).done(function (res) {
-        if (res==1) {
-            setTimeout(function () {
+        $(".loading").hide();
+        if (res==1) {            
                 toastr.options = {
                     closeButton: true,
                     progressBar: true,
                     showMethod: "slideDown",
                     timeOut: 8000,
                 };
-                toastr.success("Documento Subido Correctamente.", "Éxito!");
-                }, 3000);   
+                toastr.success("Documento Subido Correctamente.", "Éxito!");                
                 $("#mono").DataTable().ajax.reload();
-        }        
+        } else {
+            toastr.options = {
+                closeButton: true,
+                progressBar: true,
+                showMethod: "slideDown",
+                timeOut: 8000,
+              };
+              toastr.error("Ocurrio un error ineperado.", "Error!");      
+        }       
                 
     });
 
@@ -122,30 +138,42 @@ function fun2(){
     $("#entregables").click();
 }
 
-function subirEntregables(id){        
-    var formData = 'id='+id;    
+function subirEntregables(id){ 
+    $(".loading").show();
+    var formData = new FormData(document.getElementById("EntregablesForm"));  
+    var base = document.getElementById("entregables");       
+    var pdf = base.files[0];    
+
+    formData.append("id", id);
+    formData.append("pdf", pdf);     
     $.ajax({
-        url: "apirest/InsertarOrdenCompra.php",
+        url: "apirest/InsertarEntregables.php",
         type: "POST",  
         dataType:"html",      
-        data: formData,
-        asycn: false,
-        // cache: false,
-        // contentType: false,
-        // processData: false,
+        data: formData,        
+        cache: false,
+        contentType: false,
+        processData: false
     }).done(function (res) {
-        if (res==1) {
-            setTimeout(function () {
+        $(".loading").hide();
+        if (res==1) {            
                 toastr.options = {
                     closeButton: true,
                     progressBar: true,
                     showMethod: "slideDown",
                     timeOut: 8000,
                 };
-                toastr.success("Documento Subido Correctamente.", "Éxito!");
-                }, 3000);   
+                toastr.success("Documento Subido Correctamente.", "Éxito!");                
                 $("#mono").DataTable().ajax.reload();
-        }        
+        } else {
+            toastr.options = {
+                closeButton: true,
+                progressBar: true,
+                showMethod: "slideDown",
+                timeOut: 8000,
+              };
+              toastr.error("Ocurrio un error ineperado.", "Error!");      
+        }    
                 
     });
 

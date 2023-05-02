@@ -26,9 +26,46 @@
     <link href="css/plugins/select2/select2.min.css" rel="stylesheet">
     <link href="css/plugins/toastr/toastr.min.css" rel="stylesheet">
 
+    <style>
+        .loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: 1s all;
+            opacity: 0;
+        }
+        .loading.show {
+            opacity: 0.6;
+        }
+        .loading .spin {
+            border: 3px solid hsla(185, 100%, 62%, 0.2);
+            border-top-color: #3cefff;
+            border-radius: 50%;
+            width: 3em;
+            height: 3em;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+          to {
+            transform: rotate(360deg);
+          }
+        }            
+    </style>
+
 </head>
 
 <body class="top-navigation">
+
+    <div class="loading show" >
+        <div class="spin"></div>
+    </div>
 
     <div id="wrapper">
         <div id="page-wrapper" class="personalizado-bg">
@@ -353,7 +390,9 @@
 
     <script src="js/bootstrap-multiselect.min.js"></script>
 
-    <script>        
+    <script>   
+    
+        $(".loading").hide();
 
         $("#botonBack").click(function() {            
             $("#ProveedorPrincipal").css('display', 'block');                        
@@ -382,30 +421,7 @@
         function DatosFaltantesProvedor() {                         
           var data = JSON.parse(localStorage.getItem("Id"));          
           var idEmp = "";
-          if (JSON.parse(localStorage.getItem("Id") === null)) {
-
-            // <?php
-            //     $listadoID = array();
-            //     $idEmpresa = '';
-            //     $sql2="SELECT * FROM MFEmpresaInterna WHERE Proveedor!=''";
-            //     $ejecutar2=sqlsrv_query($con, $sql2);
-            //     while ($row = sqlsrv_fetch_array($ejecutar2, SQLSRV_FETCH_ASSOC)){	
-            //         $idEmpresa = $row['ObjID'];                    
-            //         array_push($listadoID, $idEmpresa);	                                 
-            //     }
-
-            //     $idC = json_encode($listadoID);
-                
-            // ?>
-            //     var listadoEmpresaJS = <?php #echo $idC; ?>;
-            //     // console.log(listadoEmpresaJS);
-            //     var arr = [];
-            //     for (var i = 0; i < listadoEmpresaJS.length; i++){
-            //         arr.push(listadoEmpresaJS[i].toString());                                        
-            //     }
-            //     console.log("Definitiva: ", arr);                
-
-            // idEmp = arr;
+          if (JSON.parse(localStorage.getItem("Id") === null)) {            
             id = "";
           } else {
             idEmp = JSON.parse(localStorage.getItem("Id"));

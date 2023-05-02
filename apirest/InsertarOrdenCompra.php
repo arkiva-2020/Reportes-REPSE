@@ -1,6 +1,10 @@
 <?php
 include("../conexion/conexion.php");
-function generador($longitud,$letras_min,$letras_may,$numeros,$simbolos){
+
+
+if(isset($_FILES["pdf"])){
+
+	function generador($longitud,$letras_min,$letras_may,$numeros,$simbolos){
 		
 		$variacteres = $letras_min?'abdefghijklmnopqrstuvwxyz':'';
 			//Hacemos lo mismo para letras mayúsculas,numeros y simbolos
@@ -27,12 +31,33 @@ function generador($longitud,$letras_min,$letras_may,$numeros,$simbolos){
 				//Mostramos la cadena generada por medio de -echo-
 			return $random;
 
-		}
+	}
 
-        $random=generador(10,true,true,true,false);
+	$random=generador(10,true,true,true,false);
+	    
+    
+    $id=$_REQUEST['id'];    
 
-$id=$_POST['id'];
-$sql="EXECUTE InsertarOrdenDeCompra N'Orden De Compra: $random', N'$id' ";
-$ejecutar=sqlsrv_query($con, $sql);
-echo '1';
+    $filename = $_FILES['pdf']['name'];
+    $temp = $_FILES['pdf']['tmp_name'];
+    
+    $explode    =   explode('.', $filename);
+    $extension  =   array_pop($explode);
+	$compra		= 	"Orden De Compra";
+    $result     =   $compra.'_'.$random.'.'.$extension;
+    
+
+    move_uploaded_file($temp, '../documentos/orden-de-compra-emitida/'.$result); 
+            
+	$sql="EXECUTE InsertarOrdenDeCompra N'Orden De Compra: $random', N'$id' ";    
+    $ejecutar=sqlsrv_query($con, $sql);
+
+    echo '1';
+} else {
+    echo '2';
+}
+
+
+
+
 ?>
